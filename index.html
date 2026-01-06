@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Học Toán Cùng Bé</title>
+    <style>
+      body {
+        font-family: "Comic Sans MS", "Segoe UI", sans-serif;
+        background: linear-gradient(to bottom, #e0f7fa, #fffde7);
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+        color: #333;
+        overflow-x: hidden;
+      }
+      h1 {
+        color: #ff4081;
+        margin-bottom: 10px;
+      }
+      #levelInfo {
+        font-size: 20px;
+        color: #4caf50;
+        margin: 10px 0;
+        font-weight: bold;
+      }
+      .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+        background: #ffdeeb;
+        border-radius: 25px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      }
+      .menu button {
+        background: #81d4fa;
+        border: none;
+        padding: 12px 24px;
+        margin: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 15px;
+        color: white;
+      }
+      .menu button:hover {
+        background: #4fc3f7;
+      }
+      #question {
+        font-size: 28px;
+        margin: 25px 0;
+        font-weight: bold;
+      }
+      #images {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        min-height: 100px;
+      }
+      #images img {
+        width: 80px;
+        height: auto;
+        object-fit: contain;
+      }
+      .answers button {
+        background: #ffd54f;
+        border: none;
+        padding: 18px;
+        margin: 8px;
+        font-size: 28px;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 70px;
+        height: 70px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      .answers button:hover {
+        background: #ffca28;
+        transform: scale(1.1);
+      }
+      #feedback {
+        font-size: 32px;
+        margin: 25px 0;
+        font-weight: bold;
+      }
+
+      @media (max-width: 600px) {
+        #images img {
+          width: 60px;
+        }
+        .answers button {
+          width: 55px;
+          height: 55px;
+          font-size: 22px;
+          margin: 5px;
+        }
+        .container {
+          padding: 15px;
+        }
+        h1 {
+          font-size: 28px;
+        }
+        #levelInfo {
+          font-size: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎂🐥⭐Học Toán Cùng Mi lùn ⭐🐥🎂</h1>
+      <div id="levelInfo">Level: Dễ (0-9) • Chuỗi đúng: 0</div>
+      <div class="menu">
+        <button onclick="startGame('count')">Đếm Số</button>
+        <button onclick="startGame('add')">Cộng</button>
+        <button onclick="startGame('subtract')">Trừ</button>
+      </div>
+      <div id="question"></div>
+      <div id="images"></div>
+      <div class="answers" id="answers"></div>
+      <div id="feedback"></div>
+    </div>
+
+    <!-- Âm thanh -->
+    <audio id="bgMusic" loop>
+      <source src="background.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="correctSound">
+      <source src="correct.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="wrongSound">
+      <source src="wrong.mp3" type="audio/mpeg" />
+    </audio>
+
+    <script>
+      let mode = "";
+      let correctAnswer = 0;
+      let streak = 0; // Chuỗi đúng liên tiếp
+      let level = "easy"; // 'easy' (0-9) hoặc 'hard' (0-20)
+      const MAX_STREAK_TO_LEVEL_UP = 5;
+      const images = [
+        "cake1.png",
+        "chick.png",
+        "star.png",
+        "cake2.png",
+        "mushroom.png",
+      ];
+
+      // Phát nhạc nền khi load (volume thấp)
+      window.onload = () => {
+        const bg = document.getElementById("bgMusic");
+        bg.volume = 0.3;
+        bg.play().catch(() => console.log("Nhấn màn hình để bật nhạc nhé!"));
+        updateLevelInfo();
+      };
+
+      function updateLevelInfo() {
+        const levelText = level === "easy" ? "Dễ (0-9)" : "Khó (0-20)";
+        document.getElementById(
+          "levelInfo"
+        ).innerHTML = `Level: ${levelText} • Đã đúng liên tiếp: ${streak} câu`;
+      }
+
+      function getRandomImage() {
+        return images[Math.floor(Math.random() * images.length)];
+      }
+
+      function getMaxNumber() {
+        return level === "easy" ? 9 : 20;
+      }
+
+      function startGame(selectedMode) {
+        mode = selectedMode;
+        streak = 0;
+        level = "easy";
+        document.getElementById("feedback").innerHTML = "";
+        updateLevelInfo();
+        generateQuestion();
+      }
+
+      function generateQuestion() {
+        const imagesDiv = document.getElementById("images");
+        const questionDiv = document.getElementById("question");
+        const answersDiv = document.getElementById("answers");
+        imagesDiv.innerHTML = "";
+        answersDiv.innerHTML = "";
+
+        const maxNum = getMaxNumber();
+        let num1 = Math.floor(Math.random() * (maxNum + 1));
+        let num2 = Math.floor(Math.random() * (maxNum + 1));
+
+        if (mode === "count") {
+          correctAnswer = num1;
+          questionDiv.innerHTML = "Có bao nhiêu hình thế này?";
+          const imgSrc = getRandomImage();
+          for (let i = 0; i < correctAnswer; i++) {
+            const img = document.createElement("img");
+            img.src = imgSrc;
+            imagesDiv.appendChild(img);
+          }
+        } else if (mode === "add") {
+          // Giữ tổng ≤ maxNum*2 để hợp lý
+          num1 = Math.floor(Math.random() * (maxNum + 1));
+          num2 = Math.floor(Math.random() * (maxNum + 1 - num1));
+          correctAnswer = num1 + num2;
+          questionDiv.innerHTML = `${num1} + ${num2} = ?`;
+          const imgSrc1 = getRandomImage();
+          const imgSrc2 = getRandomImage();
+          for (let i = 0; i < num1; i++) {
+            const img = document.createElement("img");
+            img.src = imgSrc1;
+            imagesDiv.appendChild(img);
+          }
+          imagesDiv.innerHTML +=
+            ' <span style="font-size:40px; font-weight:bold;">+</span> ';
+          for (let i = 0; i < num2; i++) {
+            const img = document.createElement("img");
+            img.src = imgSrc2;
+            imagesDiv.appendChild(img);
+          }
+        } else if (mode === "subtract") {
+          // Đảm bảo num1 >= num2
+          num1 = Math.floor(Math.random() * (maxNum + 1));
+          num2 = Math.floor(Math.random() * (num1 + 1));
+          correctAnswer = num1 - num2;
+          questionDiv.innerHTML = `${num1} - ${num2} = ?`;
+          const imgSrc = getRandomImage();
+          for (let i = 0; i < num1; i++) {
+            const img = document.createElement("img");
+            img.src = imgSrc;
+            imagesDiv.appendChild(img);
+          }
+          imagesDiv.innerHTML +=
+            ' <span style="font-size:40px; font-weight:bold;">-</span> ';
+          for (let i = 0; i < num2; i++) {
+            const img = document.createElement("img");
+            img.src = imgSrc;
+            img.style.opacity = 0.4;
+            imagesDiv.appendChild(img);
+          }
+        }
+
+        // Tạo nút đáp án từ 0 đến max*2 (để an toàn)
+        const maxAnswer = maxNum * 2;
+        for (let i = 0; i <= maxAnswer; i++) {
+          const btn = document.createElement("button");
+          btn.innerHTML = i;
+          btn.onclick = () => checkAnswer(i);
+          answersDiv.appendChild(btn);
+        }
+      }
+
+      function checkAnswer(answer) {
+        const feedback = document.getElementById("feedback");
+        const correctAudio = document.getElementById("correctSound");
+        const wrongAudio = document.getElementById("wrongSound");
+
+        if (answer === correctAnswer) {
+          streak++;
+          feedback.innerHTML = "Giỏi quá! 🎉❤️";
+          feedback.style.color = "green";
+          correctAudio.currentTime = 0;
+          correctAudio.play().catch(() => {});
+
+          if (streak >= MAX_STREAK_TO_LEVEL_UP && level === "easy") {
+            level = "hard";
+            feedback.innerHTML += " <br>🎈 Lên level khó hơn rồi nè! (0-20)";
+            updateLevelInfo();
+          } else {
+            feedback.innerHTML += " 🌟✨";
+          }
+          updateLevelInfo();
+        } else {
+          streak = 0;
+          feedback.innerHTML = "Thử lại nhé bé ơi! 😊";
+          feedback.style.color = "red";
+          wrongAudio.currentTime = 0;
+          wrongAudio.play().catch(() => {});
+          level = "easy"; // Reset về dễ khi sai
+          updateLevelInfo();
+        }
+
+        setTimeout(generateQuestion, 1500);
+      }
+    </script>
+  </body>
+</html>
