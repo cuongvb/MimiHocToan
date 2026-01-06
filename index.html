@@ -9,47 +9,65 @@
         font-family: "Comic Sans MS", "Segoe UI", sans-serif;
         background: linear-gradient(to bottom, #e0f7fa, #fffde7);
         margin: 0;
-        padding: 20px;
+        padding: 10px; /* Giảm padding trên mobile */
         text-align: center;
         color: #333;
         overflow-x: hidden;
       }
+
       h1 {
         color: #ff4081;
-        margin-bottom: 10px;
+        margin: 10px 0 5px; /* Giảm margin */
+        font-size: 2rem; /* Linh hoạt hơn */
       }
+
       #levelInfo {
-        font-size: 20px;
+        font-size: 1.1rem;
         color: #4caf50;
-        margin: 10px 0;
+        margin: 5px 0 15px;
         font-weight: bold;
       }
+
       .container {
         max-width: 900px;
         margin: auto;
-        padding: 20px;
+        padding: 15px;
         background: #ffdeeb;
         border-radius: 25px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
       }
+
+      .menu {
+        display: flex;
+        flex-wrap: wrap; /* Cho phép nút xuống dòng nếu không vừa */
+        justify-content: center; /* Căn giữa */
+        gap: 10px; /* Khoảng cách giữa nút */
+        margin-bottom: 20px;
+      }
+
       .menu button {
         background: #81d4fa;
         border: none;
         padding: 12px 24px;
-        margin: 10px;
-        font-size: 20px;
+        font-size: 1.1rem; /* Linh hoạt */
         cursor: pointer;
         border-radius: 15px;
         color: white;
+        flex: 1 1 120px; /* Nút co giãn, min-width ~120px */
+        max-width: 180px; /* Giới hạn max để không to quá */
+        box-sizing: border-box;
       }
+
       .menu button:hover {
         background: #4fc3f7;
       }
+
       #question {
-        font-size: 28px;
-        margin: 25px 0;
+        font-size: 1.6rem;
+        margin: 20px 0;
         font-weight: bold;
       }
+
       #images {
         display: flex;
         flex-wrap: wrap;
@@ -57,51 +75,100 @@
         gap: 12px;
         min-height: 100px;
       }
+
       #images img {
         width: 80px;
         height: auto;
         object-fit: contain;
       }
+
+      .answers {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+
       .answers button {
         background: #ffd54f;
         border: none;
-        padding: 18px;
-        margin: 8px;
-        font-size: 28px;
+        padding: 15px;
+        margin: 5px;
+        font-size: 1.5rem;
         cursor: pointer;
         border-radius: 50%;
         width: 70px;
         height: 70px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
+
       .answers button:hover {
         background: #ffca28;
         transform: scale(1.1);
       }
+
       #feedback {
-        font-size: 32px;
-        margin: 25px 0;
+        font-size: 1.8rem;
+        margin: 20px 0;
         font-weight: bold;
       }
 
+      /* Responsive cho mobile (ưu tiên màn hình nhỏ) */
       @media (max-width: 600px) {
+        body {
+          padding: 8px;
+          font-size: 16px;
+        } /* Base font nhỏ hơn */
+
+        h1 {
+          font-size: 1.6rem;
+          margin: 8px 0;
+        } /* Tiêu đề nhỏ lại */
+
+        #levelInfo {
+          font-size: 1rem;
+          margin: 5px 0;
+        }
+
+        .menu {
+          flex-direction: column; /* Nút xếp dọc trên mobile */
+          gap: 12px;
+        }
+
+        .menu button {
+          flex: 1 1 auto; /* Full width */
+          max-width: none;
+          padding: 14px;
+          font-size: 1.2rem;
+        }
+
+        #question {
+          font-size: 1.4rem;
+          margin: 15px 0;
+        }
+
         #images img {
           width: 60px;
-        }
+        } /* Hình nhỏ hơn */
+
         .answers button {
-          width: 55px;
-          height: 55px;
-          font-size: 22px;
-          margin: 5px;
+          width: 60px;
+          height: 60px;
+          font-size: 1.3rem;
+          padding: 10px;
+          margin: 4px;
         }
-        .container {
-          padding: 15px;
+
+        #feedback {
+          font-size: 1.5rem;
         }
-        h1 {
-          font-size: 28px;
-        }
-        #levelInfo {
-          font-size: 18px;
+      }
+
+      /* Tablet vừa (nếu cần) */
+      @media (min-width: 601px) and (max-width: 900px) {
+        .menu button {
+          flex: 1 1 140px;
+          font-size: 1rem;
         }
       }
     </style>
